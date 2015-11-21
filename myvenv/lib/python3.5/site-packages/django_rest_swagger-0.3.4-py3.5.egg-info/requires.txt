@@ -1,0 +1,6 @@
+django>=1.5
+djangorestframework>=2.3.8
+PyYAML>=3.10
+
+[reST]
+docutils>=0.8

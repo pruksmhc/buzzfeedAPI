@@ -6,6 +6,8 @@ class LinkedListNode(object):
 
 	def getNext(self):
 		return self.next
+
+		
 	def setNext(self, next): 
 		self.next = next 
 	def getURL(self):

@@ -13,12 +13,14 @@ class LinkedList(object):
 
 	def insertFirst(self, LLNode): 
 		if self.getHead() == None: 
-			head = LLNode 
+			self.head = LLNode 
+			print ("There is no head")
 			head.setNext(None)
 		else: 
-			LLNode.setNext(head) 
-			tail = head 
-			head = lLNode
+			LLNode.setNext(self.head) 
+			print ("Setting the head")
+			tail = self.head 
+			self.head = LLNode
 
 	def insertLast(self, LLnode): 
 		tail.setNext(LLNode)
@@ -27,8 +29,8 @@ class LinkedList(object):
 
 	def deleteFirst(self): 
 		temp = self.head
-		self.head = self.head.getNext() 
-		return head #insert the first, and then delete first into the json. 
+		self.head = temp.getNext() 
+		return temp #insert the first, and then delete first into the json. 
 		
 	def query(self,  data):
 		current = head 
