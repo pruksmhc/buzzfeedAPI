@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+<meta charste = "UTF-8">
+<title>Enter in what you want to search, and we'll return you the Buzzfeed Indico sentiment and key words!</title>
+
+<script src ="http://fb.me/react-0.12.2.js"></script>
+<script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+//this should make a p come up. 
+d3.select("body").append("p").text("Find your Buzzfeed Information");
+
+</script>
+
+
+<script type="text/jsx">
+
+
+var SearchBar = React.createClass({
+ 
+  propTypes:{
+    txt: React.PropTypes.string, 
+    filterText: React.PropTypes.string
+  }, handleChange: function() {
+    console.log("The value is"+ this.props.filterText );
+        this.props.onUserInput(
+          this.refs.textInput.getDOMNode().value
+           );
+    },
+   
+ render:function(){
+   return (
+    
+    <div>
+     <form>
+                <input type="text" 
+                placeholder="Search Key Words..." 
+                ref="textInput"
+                 value={this.props.filterText}
+                 onChange={this.handleChange}/>
+                
+            </form>
+       <p>Time to change</p>
+    
+       <h1> {this.props.txt}</h1>
+       <button  onClick={this.props.search}  >Search</button>
+
+    </div>
+    )
+    
+}
+}); 
+
+var FilterableProductTable = React.createClass({
+    getInitialState: function() {
+        return {
+            filterText: '',
+            inStockOnly: false, 
+            txt:"Check out the buzzfeed API"
+        };
+    },
+
+    handleUserInput: function(filterText, inStockOnly) {
+      console.log("the parent is hcanging to "+filterText);
+        this.setState({
+            filterText: filterText,
+            inStockOnly: inStockOnly
+        });
+    }, 
+    search: function(){
+      console.log("searching "+this.state.filterText)
+      $.ajax({
+    type: 'GET',
+    url: 'http://127.0.0.1:8000/test'
+  })
+  .done(function(data) {
+   console.log("YAY DONE WITH THE SEARCH HERE'S THE DATA"+JSON.stringify(data)); 
+
+  })
+  .fail(function(jqXhr) {
+    console.log('failed to register');
+  });
+
+    },
+
+    render: function() {
+        return (
+            <div>
+                <SearchBar
+                    filterText={this.state.filterText}
+                    inStockOnly={this.state.inStockOnly}
+                    onUserInput={this.handleUserInput}
+                    search={this.search}
+                     txt ={this.state.txt}/>
+                    }
+            
+               
+            </div>
+        );
+    }
+});
+
+
+React.render(<FilterableProductTable text2="H" filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
+</script>
+
+</body>
+</html>
+
