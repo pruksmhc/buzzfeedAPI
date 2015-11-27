@@ -15,8 +15,8 @@ The data structures used are:
 
 Abstract & Importa
 
-Goalsf or today: 
--Get the JSON from the back-end in a parseable way for the d3.js ,and then go back to the backend for getting teh text form Buzzfeed, and the indico stuff. 
+Goals: 
+-Get the JSON from the back-end in a parseable way for the d3.js (CHECK) ,and then go back to the backend for getting teh text form Buzzfeed (CHECK), get from comments, get and the indico stuff, and then implement the d3.js stuff for the front end . DO IT YOU CAN DO IT. 
 
 
 
