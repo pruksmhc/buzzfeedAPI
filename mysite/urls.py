@@ -17,17 +17,22 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
 from mysite.views import *
+from views import BuzzfeedSet
+import buzzfeed
 from django.views.generic import TemplateView
 
 
 router = routers.DefaultRouter()
 
+
+
+router = routers.DefaultRouter()
+
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'', TemplateView.as_view(template_name='index.html')),
-      
-        url(r'^test$','views.buzzfeedSet', name='buzzfeedSet')
-   
+    url(r'^/admin/', include(admin.site.urls)),
+  # url(r'', TemplateView.as_view(template_name='index.html')),
+    url(r'^test/', BuzzfeedSet), 
+     url(r'', TemplateView.as_view(template_name="index.html"))
 ]
 
 

@@ -26,7 +26,7 @@ var SearchBar = React.createClass({
  
   propTypes:{
     txt: React.PropTypes.string, 
-    filterText: React.PropTypes.string
+    filterText: React.PropTypes.st=ring
   }, handleChange: function() {
     console.log("The value is"+ this.props.filterText );
         this.props.onUserInput(
@@ -74,18 +74,15 @@ var FilterableProductTable = React.createClass({
         });
     }, 
     search: function(){
-      console.log("searching "+this.state.filterText)
-      $.ajax({
-    type: 'GET',
-    url: 'http://127.0.0.1:8000/test'
-  })
-  .done(function(data) {
-   console.log("YAY DONE WITH THE SEARCH HERE'S THE DATA"+JSON.stringify(data)); 
 
-  })
-  .fail(function(jqXhr) {
-    console.log('failed to register');
-  });
+      console.log("searching "+this.state.filterText)
+
+      $.post(
+   'http://127.0.0.1:8000/test/', 
+   {word: this.state.filterText}, function(data){
+        console.log("DONE is"+data);
+      }
+  );
 
     },
 
@@ -109,6 +106,8 @@ var FilterableProductTable = React.createClass({
 
 React.render(<FilterableProductTable text2="H" filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
 </script>
+
+
 
 </body>
 </html>
