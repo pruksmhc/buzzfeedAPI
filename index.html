@@ -1,23 +1,26 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html lang ="en">
 <head>
-<meta charste = "UTF-8">
 <title>Enter in what you want to search, and we'll return you the Buzzfeed Indico sentiment and key words!</title>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 <script src ="http://fb.me/react-0.12.2.js"></script>
 <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
-<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 </head>
 <body>
 
+
 <script type="text/javascript">
 //this should make a p come up. 
 d3.select("body").append("p").text("Find your Buzzfeed Information");
+d3.selectAll("p").style("color", "white");
 
 </script>
-
 
 <script type="text/jsx">
 
@@ -36,6 +39,7 @@ var SearchBar = React.createClass({
    
  render:function(){
    return (
+    <body>
     
     <div>
      <form>
@@ -52,6 +56,7 @@ var SearchBar = React.createClass({
        <button  onClick={this.props.search}  >Search</button>
 
     </div>
+    </body>
     )
     
 }

@@ -78,7 +78,7 @@ def getSentiment(json):
 	most_frequent_words = getFrequentWords(json) 
 	print('Most frequtent word is '+ most_frequent_words)
 
-	json = "{\"results\":[ \""+str(above_average)+"\", \""+str(below_average)+"\", \""+str(average)+"\", \" "+str(keywords)+"\", \""+most_frequent_words+"\"]}"
+	json = "{\"results\":{\"above_average\":\""+str(above_average)+"\", \"below_average\" :\""+str(below_average)+"\",\"average\":"+str(average)+"}, \"keywords\": \""+str(keywords)+"\", \"most_frequent_word\":\""+most_frequent_words+"\"}"
 	print json
 	return json
 
@@ -163,6 +163,7 @@ def getBuzzfeed(word):
 				match = match.replace("\\xa0", " ")
 				match = match.replace('u201c', ' ')
 				match = match.replace('u201d', ' ')
+				match = match.replace('u2026', ' ')
 				match = match.replace("\\n\\t\\t", "")
 				match = re.sub(r'\W+', ' ', match)
 				match = match.replace("u2019", "'")
@@ -188,6 +189,8 @@ def getBuzzfeed(word):
 	print (jsonStr)
 	commentsList = getBuzzfeedPost(jsonStr)
 	sentiment = getSentiment(commentsList)
+	return sentiment
+
 	#create a hhahmap with teh most used words. 
 
 

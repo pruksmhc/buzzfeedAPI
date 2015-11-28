@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang ="en">
+<head>
+<meta charset="UTF-8">
+<meta content="utf-8" http-equiv="encoding">
+
+<title>Enter in what you want to search, and we'll return you the Buzzfeed Indico sentiment and key words!</title>
+<script src ="http://fb.me/react-0.12.2.js"></script>
+<script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+<script src="http://mbostock.github.com/d3/d3.js"></script>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+
+
+<script type="text/jsx">
+
+var Sector = React.createClass({
+  getInitialState: function() {
+    return {text: '', opacity:'arc'};
+  },
+  render: function() {
+    var outerRadius = this.props.width/2.2;
+    var innerRadius = this.props.width/8;
+    var arc = d3.svg.arc()
+        .outerRadius(outerRadius)
+        .innerRadius(innerRadius);
+    var data = this.props.data;
+    var name = this.props.name;
+    console.log("name is "+name)
+    var center = "translate(" + arc.centroid(data) + ")";
+    var percentCenter = "translate(0,3)";
+    var color = this.props.colors;
+    return (
+      <g onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} onClick={this.onClick}>
+        <path className={this.state.opacity} fill={color[this.props.ikey]} d={arc(this.props.data)}></path>
+        <text fill="white" transform={center} textAnchor="middle" fontSize="15px">{name}</text>
+        <text fill={color[this.props.ikey]} stroke={color} fontSize="15px" transform={percentCenter} textAnchor="middle">{this.state.text}</text>
+      </g>
+    );
+  },
+
+  onMouseOver: function() {
+    this.setState({text: '', opacity:'arc-hover'});
+    var percent = (this.props.data.value/this.props.total)*100;
+    percent = percent.toFixed(1);
+    this.setState({text: percent + " %"});
+  },
+  onMouseOut: function() {
+    this.setState({text: '', opacity:'arc'});
+  },
+  onClick: function() {
+    alert("You clicked "+this.props.name);
+  }
+});
+
+
+var DataSeries = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number.isRequired,
+    height: React.PropTypes.number.isRequired,
+    color: React.PropTypes.array,
+    data: React.PropTypes.array.isRequired,
+  },
+  render: function() {
+    var color = this.props.colors;
+    var data = this.props.data;
+    var width = this.props.width;
+    var height = this.props.height;
+    var pie = d3.layout.pie();
+    if (data.length!= 0){
+       var result = data.map(function(item){
+      return item.count;
+    })
+        var names = data.map(function(item){
+      return item.name;
+
+    })
+          var sum = result.reduce(function(memo, num){ return memo + num; }, 0);
+    var position = "translate(" + (width)/2 + "," + (height)/2 + ")";
+   var bars = (pie(result)).map(function(point, i) {
+      return (
+        <Sector data={point}  name ={data} ikey={i} key={i} name={names[i]} colors={color} total=  
+        {sum} width={width} height={height}/>
+      )
+    });
+
+     }
+  
+    return (
+        <g transform={position}>{bars}</g>
+    );
+  }
+});
+
+var D3Chart = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number.isRequired,
+    height: React.PropTypes.number.isRequired,
+    children: React.PropTypes.node,
+  },
+  render: function() {
+    return (
+      <svg width={this.props.width} height={this.props.height}>        
+      {this.props.children}</svg>
+    );
+  }
+});
+
+
+
+
+var ResultBar = React.createClass({
+
+ 
+  propTypes:{
+     width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    title: React.PropTypes.string,
+    data: React.PropTypes.array.isRequired,
+     words: React.PropTypes.string.isRequired
+  }, 
+   getDefaultProps: function() {
+    return {
+      width: 300,
+      height: 350,
+      title: 'YO',
+      Legend: true, 
+      colors:  ['#FD9827', '#DA3B21', '#3669C9', '#1D9524', '#971497'], 
+      most_frequent_words:"frequent"
+    };
+  }
+  , handleChange: function() {
+    console.log("The value is"+ this.props.filterText );
+        this.props.onUserInput(
+          this.refs.textInput.getDOMNode().value
+           );
+    },
+   
+ render:function(){
+  console.log("The words gotten are "+this.props.words)
+   var words =this.props.words.toString()
+   console.log(words)
+   return (
+    <body>
+    
+    <div class="news-story">
+       <p>Results</p>
+       <p> {{this.props.title}}</p>
+      
+         <D3Chart width={this.props.width} height={this.props.height}>
+              <DataSeries data={this.props.data} colors={this.props.colors} width=
+                {this.props.width} height={this.props.height}/>
+        </D3Chart>
+      <p>The most frequent words are: </p>
+     <p> {this.props.words}</p>
+
+     
+    </div>
+  
+    </body>
+    )
+    
+}
+}); 
+
+var FilterableProductTable = React.createClass({
+    getInitialState: function() {
+        return {
+            filterText: '',
+            inStockOnly: false, 
+            txt:"Check out the buzzfeed API", 
+         
+data :[
+    {name: "Above Average",count: parseFloat(above_average)},
+    {name: "Below Average", count: parseFloat(below_average)},
+    {name: "Average", count: parseFloat(average)}, 
+], 
+words: keywords.toString()
+}
+    
+  },
+
+    handleUserInput: function(filterText, inStockOnly) {
+      console.log("the parent is hcanging to "+filterText);
+        this.setState({
+            filterText: filterText,
+            inStockOnly: inStockOnly
+        });
+    }, 
+    search: function(){
+
+      console.log("searching "+this.state.filterText)
+
+      $.post(
+   'http://127.0.0.1:8000/test/', 
+   {word: this.state.filterText}, function(data){
+        console.log("DONE is"+data);
+      }
+  );
+
+    },
+
+    render: function() {
+        return (
+            <div>
+                <ResultBar
+                    filterText={this.state.filterText}
+                    inStockOnly={this.state.inStockOnly}
+                    onUserInput={this.handleUserInput}
+                    search={this.search} 
+                    data = {this.state.data}
+                    words= {this.state.words}
+                    title="Yo"
+                     txt ={this.state.txt}/>
+                    }
+                    
+            
+               
+            </div>
+        );
+    }
+});
+
+ data = localStorage.getItem("Data")
+ console.log(typeof data)
+ var json = JSON.parse(data)
+ console.log(json)
+ console.log(typeof json)
+ above_average = json.results.above_average
+ below_average = json.results.below_average
+ average = json.results.average
+ keywords = json.keywords 
+ most_frequent_words = json.most_frequent_word
+ console.log("WOrd is "+most_frequent_words)
+
+
+         
+data =[
+    {name: "Above Average",count: parseFloat(above_average)},
+    {name: "Below Average", count: parseFloat(below_average)},
+    {name: "Average", count: parseFloat(average)}
+]
+
+words=keywords.toString()
+
+React.render(<FilterableProductTable text2="H"  data={data} words = {words} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
+</script>
+  <script type="text/javascript">
+    d3.select("body").append("h1").html("WHAT")
+</script>
+
+
+</body>
+
+
+
+</html>
+
