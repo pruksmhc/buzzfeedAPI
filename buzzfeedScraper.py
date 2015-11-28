@@ -8,7 +8,7 @@ from LinkedListNode import LinkedListNode
 from Linked_List import LinkedList
 import indicoio
 from ast import literal_eval
-
+from Hashmap import HashMap 
 
 
 
@@ -30,9 +30,30 @@ indicoio.config.api_key = "fd1d2b43d2cecbb5bf178f3062cd96f1"
 #	jsonObj = json.loads("[{\"url\": \"http://www.buzzfeed.com/bradesposito/not-today-movie\", \"title\": \" No There Won 't Be A Game Of Thrones Movie Any Time Soon\"}]"
 
 
+def getFrequentWords(json):
+	print("PRINTING MOST FREQUENT WORD ")
+	hash_map = HashMap("hello")
+	array = literal_eval(json)
+	for item in array:
+		words = str(item).split(" ")
+		print (words)
+		for word in words:
+			if word != "":
+				print("The word being examined is "+word)
+				if(hash_map.containsKey(word) ==False):
+					print("Putitng the word in")
+					hash_map.put(word, 1) 
+				else:
+					print("Incrementing the word")
+					node =hash_map.query(word).setValue(hash_map.get(word)+1)  
+			#at the end fo the array 
+	print (hash_map.find_highest_value().getKey())
+	return hash_map.find_highest_value().getKey()
+
 def getSentiment(json):
 	array = literal_eval(json)
 	sentiments =  indicoio.sentiment(array)
+	keywords = indicoio.keywords(array)
 	print(sentiments)
 	average =0 
 	above_average = 0 
@@ -53,9 +74,11 @@ def getSentiment(json):
 	above_average = float(above_average)/len(sentiments)
 	print(str(below_average))
 	print (len(sentiments))
-	below_average= float(below_average)/len(sentiments)
+	below_average= float(below_average)/len(sentiments) 
+	most_frequent_words = getFrequentWords(json) 
+	print('Most frequtent word is '+ most_frequent_words)
 
-	json = "{\"results\":[ \""+str(above_average)+"\", \""+str(below_average)+"\", \""+str(average)+"\"]}"
+	json = "{\"results\":[ \""+str(above_average)+"\", \""+str(below_average)+"\", \""+str(average)+"\", \" "+str(keywords)+"\", \""+most_frequent_words+"\"]}"
 	print json
 	return json
 
@@ -113,71 +136,70 @@ def getBuzzfeedPost(input):
 	print jsonStr
 	return jsonStr
 
+def getBuzzfeed(word):
+	print ("PRINTING BUZZFEE")
 
-print ("PRINTING BUZZFEE")
+	firstNode = LinkedListNode("")
+	firstNode.setNext(None)
+	LLlist= LinkedList(firstNode)
+	jsonStr = '{ \"results\": ['
+	url = "http://www.buzzfeed.com/tag/"+word
+	html = urllib.urlopen(url).read()
+	htmlObject = BeautifulSoup(html, features="lxml")
+	headlines = []
+	count =0
+	print ("Second tag")
+	print (htmlObject)
+	for item in htmlObject.findAll(re.compile("h2", re.S)):
+		if count <3:
+			print(item)
+			pattern = re.compile("<a href=\"(.*)\" rel:gt_act=\"post/titl.*>(.*)</a>", re.S)
+			match = pattern.match(repr(item.a))
+			print(match==None)
+			if match != None:
+				url = "http://www.buzzfeed.com"+match.groups()[0]
+				print(url)
+				match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
+				match = match.replace("\\xa0", " ")
+				match = match.replace('u201c', ' ')
+				match = match.replace('u201d', ' ')
+				match = match.replace("\\n\\t\\t", "")
+				match = re.sub(r'\W+', ' ', match)
+				match = match.replace("u2019", "'")
+				print(match)
+				node = LinkedListNode(url)
+				node.setTitle(match)
+				print("The node is "+node.getURL())
+				print ("The title is "+node.getTitle())
+				LLlist.insertFirst(node)
+				print("The  next object is "+ LLlist.getHead().getNext().getURL())
+				count= count+1
 
-firstNode = LinkedListNode("")
-firstNode.setNext(None)
-LLlist= LinkedList(firstNode)
-jsonStr = '{ \"results\": ['
-url = "http://www.buzzfeed.com/tag/America"
-html = urllib.urlopen(url).read()
-htmlObject = BeautifulSoup(html, features="lxml")
-headlines = []
-count =0
-print ("Second tag")
-print (htmlObject)
-for item in htmlObject.findAll(re.compile("h2", re.S)):
-	if count <3:
-		print(item)
-		pattern = re.compile("<a href=\"(.*)\" rel:gt_act=\"post/titl.*>(.*)</a>", re.S)
-		match = pattern.match(repr(item.a))
-		print(match==None)
-		if match != None:
-			url = "http://www.buzzfeed.com"+match.groups()[0]
-			print(url)
-			match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
-			match = match.replace("\\xa0", " ")
-			match = match.replace('u201c', ' ')
-			match = match.replace('u201d', ' ')
-			match = match.replace("\\n\\t\\t", "")
-			match = re.sub(r'\W+', ' ', match)
-			match = match.replace("u2019", "'")
-			print(match)
-			node = LinkedListNode(url)
-			node.setTitle(match)
-			print("The node is "+node.getURL())
-			print ("The title is "+node.getTitle())
-			LLlist.insertFirst(node)
-			print("The  next object is "+ LLlist.getHead().getNext().getURL())
-			count= count+1
-
-	#appending to the JSOn to return it back. 
-currentJSON = LLlist.deleteFirst()
-while(currentJSON.getNext().getNext() != None):
-	print ("The current json is "+currentJSON.getTitle())
-	jsonStr+= " {\"title\": \" "+currentJSON.getTitle()+ "\", \"url\": \""+currentJSON.getURL() +"\" }, "
+		#appending to the JSOn to return it back. 
 	currentJSON = LLlist.deleteFirst()
+	while(currentJSON.getNext().getNext() != None):
+		print ("The current json is "+currentJSON.getTitle())
+		jsonStr+= " {\"title\": \" "+currentJSON.getTitle()+ "\", \"url\": \""+currentJSON.getURL() +"\" }, "
+		currentJSON = LLlist.deleteFirst()
 
-		#if the last node 
-jsonStr+= " {\"title\": \" "+currentJSON.getTitle()+ "\", \"url\": \""+currentJSON.getURL() +"\" } "
-jsonStr+= ' ]}'
-print (jsonStr)
-commentsList = getBuzzfeedPost(jsonStr)
-sentiment = getSentiment(commentsList)
-#create a hhahmap with teh most used words. 
-return sentiment 
-
-
-
-	
-	#then you want to parse it through an Indico API. 
-	#return a list of ocmments from Buzzfeed. 
+			#if the last node 
+	jsonStr+= " {\"title\": \" "+currentJSON.getTitle()+ "\", \"url\": \""+currentJSON.getURL() +"\" } "
+	jsonStr+= ' ]}'
+	print (jsonStr)
+	commentsList = getBuzzfeedPost(jsonStr)
+	sentiment = getSentiment(commentsList)
+	#create a hhahmap with teh most used words. 
 
 
 
+		
+		#then you want to parse it through an Indico API. 
+		#return a list of ocmments from Buzzfeed. 
 
 
-		#now, you want to create a new linked list, with the data being 
+
+
+
+			#now, you want to create a new linked list, with the data being 
 
 

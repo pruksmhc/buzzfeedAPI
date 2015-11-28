@@ -3,4 +3,5 @@ import views
 
 urlpatterns = [
     url(r'^buzzfeed/$', views.JSONResponse.buzzfeed_list),
+    
 ]
