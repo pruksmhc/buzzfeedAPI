@@ -62,6 +62,7 @@ class HashMap(object):
   #delete all occurances o hte key .
 
 	def put(self, key, value):
+		key = key.replace("?", "")
 		node  = HashmapNode(key, value)
 		print("the nde's key being inserted in is "+node.getKey())
 		self.nodeList.append(node)

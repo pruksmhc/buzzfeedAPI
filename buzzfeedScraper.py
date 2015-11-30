@@ -1,6 +1,8 @@
 
 import sys
 import urllib
+import urllib3
+import certifi
 from bs4 import BeautifulSoup
 import re
 import json
@@ -9,7 +11,10 @@ from Linked_List import LinkedList
 import indicoio
 from ast import literal_eval
 from Hashmap import HashMap 
-
+from joblib import Parallel, delayed
+import urllib3.contrib.pyopenssl
+urllib3.contrib.pyopenssl.inject_into_urllib3()
+import multiprocessing
 
 
 #return an API. 
@@ -32,65 +37,70 @@ indicoio.config.api_key = "fd1d2b43d2cecbb5bf178f3062cd96f1"
 
 def getFrequentWords(json):
 	print("PRINTING MOST FREQUENT WORD ")
-	hash_map = HashMap("hello")
-	array = literal_eval(json)
-	for item in array:
-		words = str(item).split(" ")
-		print (words)
-		for word in words:
-			if word != "":
-				print("The word being examined is "+word)
-				if(hash_map.containsKey(word) ==False):
-					print("Putitng the word in")
-					hash_map.put(word, 1) 
-				else:
-					print("Incrementing the word")
-					node =hash_map.query(word).setValue(hash_map.get(word)+1)  
-			#at the end fo the array 
-	print (hash_map.find_highest_value().getKey())
-	return hash_map.find_highest_value().getKey()
+	return "None"
+	try:
+		hash_map = HashMap("hello")
+		for item in json:
+			words = str(item).split(" ")
+			print (words)
+			for word in words:
+				if word != "":
+					print("The word being examined is "+word)
+					if(hash_map.containsKey(word) ==False):
+						print("Putitng the word in")
+						hash_map.put(word, 1) 
+					else:
+						print("Incrementing the word")
+						node =hash_map.query(word).setValue(hash_map.get(word)+1)  
+				#at the end fo the array 
+		print (hash_map.find_highest_value().getKey())
+		return hash_map.find_highest_value().getKey()
+	except: 
+		return "None"
 
 def getSentiment(json):
-	array = literal_eval(json)
-	sentiments =  indicoio.sentiment(array)
-	keywords = indicoio.keywords(array)
-	print(sentiments)
-	average =0 
-	above_average = 0 
-	below_average =0 
-	for sentiment in sentiments: 
-		average+= sentiment
-		if(sentiment > 0.5): 
-			print("Above average")
-			above_average = above_average+1
-		else: 
-			print("Below")
-			below_average=below_average+1
+	jsonStr = ""
+	print("Getitng the sentiment")
 
-	average = average/len(sentiments)
-	print average #this gets the average, you want to get the d3 to get the 
-	#total amoutn of poercentage who has a sentiment above 0.5 is good
-	print (str(above_average))
-	above_average = float(above_average)/len(sentiments)
-	print(str(below_average))
-	print (len(sentiments))
-	below_average= float(below_average)/len(sentiments) 
-	most_frequent_words = getFrequentWords(json) 
-	print('Most frequtent word is '+ most_frequent_words)
+	print(json[0][0])
+	try:
+		print("EVALUATED ARRAY")
+		sentiments =  indicoio.sentiment(json[0][0])
+		print("has gotten the snetimetns, getitng keyw ords")
+		keywords = indicoio.keywords(json[0][0])
+		print(sentiments)
+		average =0 
+		above_average = 0 
+		below_average =0 
+		for sentiment in sentiments: 
+			average+= sentiment
+			if(sentiment > 0.5): 
+				print("Above average")
+				above_average = above_average+1
+			else: 
+				print("Below")
+				below_average=below_average+1
 
-	json = "{\"results\":{\"above_average\":\""+str(above_average)+"\", \"below_average\" :\""+str(below_average)+"\",\"average\":"+str(average)+"}, \"keywords\": \""+str(keywords)+"\", \"most_frequent_word\":\""+most_frequent_words+"\"}"
-	print json
-	return json
+		average = average/len(sentiments)
+		print average #this gets the average, you want to get the d3 to get the 
+		#total amoutn of poercentage who has a sentiment above 0.5 is good
+		above_average = float(above_average)/len(sentiments)
+		below_average= float(below_average)/len(sentiments) 
+		most_frequent_words = getFrequentWords(json) 
+		print('Most frequtent word is '+ most_frequent_words)
 
+		jsonStr = "{\"results\":{\"above_average\":\""+str(above_average)+"\", \"below_average\" :\""+str(below_average)+"\",\"average\":"+str(average)+"}, \"keywords\": \""+str(keywords)+"\", \"most_frequent_word\":\""+most_frequent_words+"\"}"
+	except Exception,e:
+		print "Unexpected error:", sys.exc_info()[0]
+	   	print str(e)
+		print ("Whoops, there was an eror, returning empty json stirng")
+		print jsonStr
+		return jsonStr
+	print jsonStr
+	return jsonStr
 
-def getBuzzfeedPost(input):
-	print(input)
-	print("GETTING TO GET BUZZFEED POST")
-	jsonObj = json.loads(input)
-	jsonStr="["
-	print(jsonObj['results'])
-	count = 0; 
-	for items in jsonObj['results']:
+def getJSON(items, jsonStr):
+	#this is where i need to parallelize the process. 
 		print("First item is ")
 		print(items)
 		print(items['url'])
@@ -99,41 +109,114 @@ def getBuzzfeedPost(input):
 		htmlObject = BeautifulSoup(html, features="html") 
 		print("Opening hte first url")
 		print(htmlObject)
-		for item in htmlObject.findAll(re.compile("h2", re.S)):
-			pattern = re.compile("<h2 class=\"subbuzz_nam(.*)span>(.*)", re.S)
-			match= pattern.match(repr(item))
-			if count == 0:
-				if match != None:
-					print(match.groups()[1]) 
-					match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
-					match = match.replace("\\xa0", " ")
-					match = match.replace('u201c', ' ')
-					match = match.replace('u201d', ' ')
-					match = match.replace("\\n\\t\\t", "")
-					match = re.sub(r'\W+', ' ', match)
-					match = match.replace("u2019", "'")
-					match = match.replace("h2", "")
-					match = match.replace("u2026", "")
-					jsonStr+="\""+match +"\""
-					count =1
-			else:
-				print("Now, looking at this item for h2")
-				print (item)
-				if match != None:
-					print("MATH  C")
-					print(match.groups()[1]) 
-					match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
-					match = match.replace("\\xa0", " ")
-					match = match.replace('u201c', ' ')
-					match = match.replace('u201d', ' ')
-					match = match.replace("\\n\\t\\t", "")
-					match = re.sub(r'\W+', ' ', match)
-					match = match.replace("u2019", "'")
-					match = match.replace("h2", "")
-					jsonStr+=", \""+match +"\""
+		#if it can find it. 
+		count =0
+		#must do for <p tags too. 
+		if  htmlObject.findAll(re.compile("h2", re.S)) != None:
+			#msut ask if t it is equal to none.
+			print("getting here ")
+			print( htmlObject.findAll(re.compile("h2", re.S)))
+			jsonStr = Parallel(n_jobs=7) (delayed(checkH2) (item, jsonStr) for item in htmlObject.findAll(re.compile("h2", re.S)) )
 
-	jsonStr+="]"
-	print jsonStr
+				
+		count =0
+		if  len(jsonStr) < 10 or None in jsonStr: #if th jsonStr is sitl empty
+		#here ou check fo rthe p. 
+			jsonStr = Parallel(n_jobs=7) (delayed(checkP) (item, jsonStr) for item in  htmlObject.findAll("p") )
+
+		return jsonStr
+
+def checkH2(item, jsonStr):
+	print("The item being examined is ")
+	print(type(item))
+	pattern = re.compile("<h2 class=\"subbuzz_nam(.*)span>(.*)", re.S)
+	match= pattern.match(repr(item))
+	count =0
+	print("Still here?")
+	if count == 0:
+		if match != None:
+			print("Match is not none")
+			print(match.groups()[1]) 
+			match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
+			match = match.replace("\\xa0", " ")
+			match = match.replace('u201c', ' ')
+			match = match.replace('u201d', ' ')
+			match = match.replace("\\n\\t\\t", "")
+			match = re.sub(r'\W+', ' ', match)
+			match = match.replace("u2019", "'")
+			match = match.replace("h2", "")
+			match = match.replace("u2026", "")
+			jsonStr.append(match)
+			count =1
+		else:
+			print("Now, looking at this item for h2")
+			if match != None:
+				print("MATH  C")
+				print(match.groups()[1]) 
+				match= match.groups()[1].replace("\\n\\t\\t\\n\\t\\t\\t","")
+				match = match.replace("\\xa0", " ")
+				match = match.replace('u201c', ' ')
+				match = match.replace('u201d', ' ')
+				match = match.replace("\\n\\t\\t", "")
+				match = re.sub(r'\W+', ' ', match)
+				match = match.replace("u2019", "'")
+				match = match.replace("h2", "")
+				jsonStr.append(match)
+	return jsonStr
+
+def checkP(item, jsonStr):
+	print("CHECKING ")
+	text= item.text
+	count =0
+	if count == 0:
+		text = text.replace("\n","")
+		text = text.replace("\t","")
+		text = text.replace("\\xa0", " ")
+		text = text.replace('u201c', ' ')
+		text = text.replace('u201d', ' ')
+		text = text.replace("u2019", "'")
+		text = text.replace("h2", "")
+		text = text.replace("\a","")
+		text = text.replace("\"","")
+		text = text.replace("\'","")
+		regex = re.compile('[^a-zA-Z]')
+		regex.sub('', text)
+		print("Tex tinserted in is ")
+		jsonStr.append(text)
+		count = 1
+	else:
+		print("inserting")
+		text = text.replace("\n","")
+		text = text.replace('u201c', ' ')
+		text = text.replace('u201d', ' ')
+		text = text.replace("u2019", "'")
+		text = text.replace("h2", "")
+		text = text.replace("       ", "")
+		text = text.replace("\r","")
+		regex = re.compile('[^a-zA-Z]')
+		regex.sub('', text)
+		print("Tex tinserted in is ")
+		print(text)
+		jsonStr.append(text)
+		print("fINISHED")
+	return jsonStr
+
+def getBuzzfeedPost(input):
+	print(input)
+	print("GETTING TO GET BUZZFEED POST")
+	jsonObj = json.loads(input)
+	jsonStr= []
+	print(jsonObj['results'])
+	count = 0; 
+	#parallizing the for-loop to get the h2. 
+	jsonStr = Parallel(n_jobs=2) (delayed(getJSON) (items, jsonStr) for items in jsonObj['results'])
+	
+			
+				 #This is now getitng the p tags. 
+			
+
+	print("Returning json")
+	print(jsonStr)
 	return jsonStr
 
 def getBuzzfeed(word):
@@ -188,7 +271,9 @@ def getBuzzfeed(word):
 	jsonStr+= ' ]}'
 	print (jsonStr)
 	commentsList = getBuzzfeedPost(jsonStr)
-	sentiment = getSentiment(commentsList)
+	print("KIn teh kgetBuzzfeed post")
+	sentiment = getSentiment(commentsList) 
+	print("returning sentiment")
 	return sentiment
 
 	#create a hhahmap with teh most used words. 
