@@ -8,17 +8,13 @@ Back-end:
 Django 
 Self-made unofficial Buzzfeed API (created via data scraping) 
 Indico API 
+Joblib for Parallelization 
 
 The data structures used are: 
 -Linked List
 -Hashmap
 
 Abstract & Importa
-
-Goals: 
--Get the JSON from the back-end in a parseable way for the d3.js (CHECK) ,and then go back to the backend for getting teh text form Buzzfeed (CHECK), get from comments, get and the indico stuff, and then implement the d3.js stuff for the front end . DO IT YOU CAN DO IT. 
-
-
 
 As the world become increasingly uploaded into the web, it is important to 
 extract data from various online resources to study political and socioeconomic trends. Empirical data, especially regarding the opinions of a population between the ages of 12 and 30, can be collected from the web from sources such as Facebook and Youtube. For example, the question: “To what extent has Islamaphobia spread throughout social media in youth?” could target Twitter tweets with the word “Islam,” returning the comments as a JSON. Twitter’s very detailed API enables social researchers to download the data set instead of having to go on Twitter, type in “Islam,” and copy paste the first n or so tweets. Buzzfeed, as one of the world’s leading entertainment and media companies, reflect the ideologies of its target customer, young adults between 13-23, in areas from fashion to world politics to social activism. However, as of now, there is no API to make use of Buzzfeed’s dataset (and very little on github). 
