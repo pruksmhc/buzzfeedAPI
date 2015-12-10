@@ -14,11 +14,11 @@ class LinkedList(object):
 	def insertFirst(self, LLNode): 
 		if self.getHead() == None: 
 			self.head = LLNode 
-			print ("There is no head")
+	#		print ("There is no head")
 			head.setNext(None)
 		else: 
 			LLNode.setNext(self.head) 
-			print ("Setting the head")
+	#		print ("Setting the head")
 			tail = self.head 
 			self.head = LLNode
 

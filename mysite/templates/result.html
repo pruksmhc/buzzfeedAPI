@@ -117,6 +117,7 @@ var D3Chart = React.createClass({
 
 var ResultBar = React.createClass({
 
+
  
   propTypes:{
      width: React.PropTypes.number,
@@ -124,7 +125,7 @@ var ResultBar = React.createClass({
     title: React.PropTypes.string,
     data: React.PropTypes.array.isRequired,
      words: React.PropTypes.string.isRequired
-  }, 
+  },   
    getDefaultProps: function() {
     return {
       width: 300,
@@ -141,16 +142,28 @@ var ResultBar = React.createClass({
           this.refs.textInput.getDOMNode().value
            );
     },
+    download: function(el){
+      console.log("Downloading"); 
+
+
+     
+    
+
+    }, 
    
  render:function(){
   console.log("The words gotten are "+this.props.words)
    var words =this.props.words.toString()
    console.log(words)
+
+    // what to return in order to show download window?
+   console.log("THe console.log is "+ this.props.json)
    return (
     <body>
     
-    <div class="news-story">
-       <p>Results</p>
+    <div class="news-story" id = "container">
+       <p>This is what Buzzfeed thinks of: (Insert word)</p> 
+
        <p> {{this.props.title}}</p>
       
          <D3Chart width={this.props.width} height={this.props.height}>
@@ -159,12 +172,18 @@ var ResultBar = React.createClass({
         </D3Chart>
       <p>The most frequent words are: </p>
      <p> {this.props.words}</p>
+ <a className = "btn" href={this.props.json} download="data.json"> Download Dataset</a>
 
-     
     </div>
   
     </body>
     )
+
+
+
+   
+
+
     
 }
 }); 
@@ -181,7 +200,8 @@ data :[
     {name: "Below Average", count: parseFloat(below_average)},
     {name: "Average", count: parseFloat(average)}, 
 ], 
-words: keywords.toString()
+words: keywords.toString(), 
+json: URL.createObjectURL(jsonObj)
 }
     
   },
@@ -215,6 +235,7 @@ words: keywords.toString()
                     onUserInput={this.handleUserInput}
                     search={this.search} 
                     data = {this.state.data}
+                    json = {this.state.json}
                     words= {this.state.words}
                     title="Yo"
                      txt ={this.state.txt}/>
@@ -239,7 +260,6 @@ words: keywords.toString()
  most_frequent_words = json.most_frequent_word
  console.log("WOrd is "+most_frequent_words)
 
-
          
 data =[
     {name: "Above Average",count: parseFloat(above_average)},
@@ -247,9 +267,17 @@ data =[
     {name: "Average", count: parseFloat(average)}
 ]
 
-words=keywords.toString()
+words=keywords.toString() 
+var json = []; 
+json.push(JSON.stringify(data)); 
+json.push(words); 
 
-React.render(<FilterableProductTable text2="H"  data={data} words = {words} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
+var jsonStr = "text/json;charset=utf-8," + encodeURIComponent(json);
+var jsonObj = new Blob([jsonStr], {type:"text/json"}); 
+
+  
+
+React.render(<FilterableProductTable text2="H"  data={data} json = {json} words = {words} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
 </script>
   <script type="text/javascript">
     d3.select("body").append("h1").html("Something went wrong, probably with the JSON or the data scraping. ")

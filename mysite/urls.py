@@ -18,6 +18,7 @@ from django.contrib import admin
 from rest_framework import routers
 from mysite.views import *
 from views import BuzzfeedSet
+from views import requestSet
 import buzzfeed
 from django.views.generic import TemplateView
 
@@ -33,7 +34,7 @@ urlpatterns = [
   # url(r'', TemplateView.as_view(template_name='index.html')),
     url(r'^test/', BuzzfeedSet), 
     url(r'result', TemplateView.as_view(template_name="result.html")), 
-    url(r'', TemplateView.as_view(template_name="index.html"))
+    url(r'',TemplateView.as_view(template_name="index.html"))
 ]
 
 

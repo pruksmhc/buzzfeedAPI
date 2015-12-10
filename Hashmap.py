@@ -36,9 +36,9 @@ class HashMap(object):
 		count =0
 		for node in self.nodeList: 
 			if node.getValue() > count:
-				print("the count has shifted")
+			#	print("the count has shifted")
 				count = node.getValue()
-				print("The count is now "+ str(count))
+			#	print("The count is now "+ str(count))
 				current_node= node 
 				print("And hte curernt nod eis "+node.getKey())
 		return current_node
