@@ -9,6 +9,6 @@ from django.db import models
 
 class BuzzfeedSearch(models.Model):
 	created  = models.DateTimeField(auto_now_add=True) 
-	json = models.CharField(max_length= 10000)
-	user =models.CharField(max_length = 1000) 
+	json = models.CharField(max_length= 1000000000)
+	name = models.CharField(max_length=100, default="Name")
 

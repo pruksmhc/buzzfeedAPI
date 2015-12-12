@@ -1,0 +1,32 @@
+
+
+<table border=1 frame=void rules=rows, cols>
+
+    <tr>
+        <th>Search Query</th>
+        <th>Time Created</th>
+        <th>Data</th>
+    </tr>
+    {% for item in query_results %}
+
+
+    <tr> 
+        <td>{{ item.name }}</td>
+        <td>{{ item.created }}</td>
+        <td>{{item.json}}
+
+
+
+
+       <td> <a href="/results?=tag{{ item.name }}/">See the results for this date</a></td>
+
+ <td><a href={item.json}} download="data.json"> Download Dataset</a></td>
+
+
+    </tr>
+
+   
+
+    {% endfor %}
+
+</table>

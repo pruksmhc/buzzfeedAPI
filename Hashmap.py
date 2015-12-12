@@ -2,10 +2,9 @@ from hashmapnode import HashmapNode
 
 class HashMap(object):
 
-	nodeList =[]
-	def __init__(self, key): 
-		self.key = key
 
+	def __init__(self): 
+		self.nodeList=[]
 
 	def containsKey(self, key): 
 		for node in self.nodeList: 
@@ -30,19 +29,22 @@ class HashMap(object):
 	 	return None
 
 
+#Finds highest value in the hashmap. 
 	def find_highest_value(self):
 		#finds the top result right
 		current_node = None
 		count =0
 		list_highest=[] 
-		sorted(self.nodeList, key=lambda node: node.value,  reverse=True)
+		print("IN EHRE ") 
+		sorted_list = sorted(self.nodeList, key=lambda node: node.value,  reverse=True)
 
 		if len(self.nodeList) < 10:
 			return self.nodeList
 
-		for node in self.nodeList: 
+		for node in sorted_list: 
 			if count <10: 
-				list_highest.append(node.getKey()) 
+				print(node.getValue())
+				list_highest.append(node) 
 				count = count+1 
 			else:
 				break
@@ -71,9 +73,9 @@ class HashMap(object):
 		if(key.isalnum()):
 			key = key.replace("?", "")
 			node  = HashmapNode(key, value)
-			print("the nde's key being inserted in is "+node.getKey())
+			#print("the nde's key being inserted in is "+node.getKey())
 			self.nodeList.append(node)
-			print("WOAH")
+		#	print("WOAH")
 		
 
 

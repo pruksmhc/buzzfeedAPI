@@ -306,6 +306,8 @@ var SearchBar = React.createClass({
       
        <button  onClick={this.props.search}  >Search</button>
 
+       <a href="/history"  >Search History</a> 
+
     </div>
     </div>
   <div id="loading" className="hide">
@@ -358,7 +360,7 @@ var FilterableProductTable = React.createClass({
         });
     }, 
     search: function(){
-
+      var query = this.state.filterText; 
       console.log("searching "+this.state.filterText)
 $('#initial').hide(); 
        $('#loading').show();
@@ -371,7 +373,7 @@ $('#initial').hide();
         localStorage.setItem("Data", data);
         //I wnat to pas sin the data gotten, and then have the other page have access to that dat a to display it using 
         //d3.js 
-        window.location.href = "results" 
+        window.location.href = "results?tag=" + query
 
       }
   );
@@ -408,7 +410,7 @@ data =[
 React.render(<FilterableProductTable text2="H"  data={data} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
 </script>
   <script type="text/javascript">
-  from django.conf import settings
+
 
     d3.select("body").append("h1").html("WHAT")
 
