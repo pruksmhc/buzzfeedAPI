@@ -34,14 +34,20 @@ class HashMap(object):
 		#finds the top result right
 		current_node = None
 		count =0
+		list_highest=[] 
+		sorted(self.nodeList, key=lambda node: node.value,  reverse=True)
+
+		if len(self.nodeList) < 10:
+			return self.nodeList
+
 		for node in self.nodeList: 
-			if node.getValue() > count:
-			#	print("the count has shifted")
-				count = node.getValue()
-			#	print("The count is now "+ str(count))
-				current_node= node 
-				print("And hte curernt nod eis "+node.getKey())
-		return current_node
+			if count <10: 
+				list_highest.append(node.getKey()) 
+				count = count+1 
+			else:
+				break
+
+		return list_highest
 
 
 	def containsValue(self, value):
@@ -62,8 +68,12 @@ class HashMap(object):
   #delete all occurances o hte key .
 
 	def put(self, key, value):
-		key = key.replace("?", "")
-		node  = HashmapNode(key, value)
-		print("the nde's key being inserted in is "+node.getKey())
-		self.nodeList.append(node)
+		if(key.isalnum()):
+			key = key.replace("?", "")
+			node  = HashmapNode(key, value)
+			print("the nde's key being inserted in is "+node.getKey())
+			self.nodeList.append(node)
+			print("WOAH")
+		
+
 

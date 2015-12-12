@@ -10,9 +10,25 @@
 <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
 <script src="http://mbostock.github.com/d3/d3.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-
+<script src="d3.layout.cloud.js"></script>
+<scriptz src = "./wordcloud.js"></scriptz>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
+<style>
+ body {
+        font-family:"Lucida Grande","Droid Sans",Arial,Helvetica,sans-serif;
+    }
+    .legend {
+        border: 1px solid #555555;
+        border-radius: 5px 5px 5px 5px;
+        font-size: 0.8em;
+        margin: 10px;
+        padding: 8px;
+    }
+    .bld {
+        font-weight: bold;
+    }
+    </style>
 </head>
 <body>
 
@@ -113,6 +129,71 @@ var D3Chart = React.createClass({
 });
 
 
+var mountNode = document.body;
+
+
+var WordCloud = React.createClass({
+
+  getInitialState: function() {
+    return {
+      topic: false
+    };
+  },
+
+  render: function() {
+    return (
+      <div id="app" key ="div" >
+        <div className="header" key="header">
+          <div className="titleBox" key= "titleBox">
+    
+          </div>
+        </div>
+        <div className="container" key ="container">
+          <div className="wordcloud" key="wordcloud">
+            <svg id="wordcloud"/>
+          </div>
+       
+        </div>
+      </div>
+    );
+  },
+
+  clickHandler : function(topic) {
+    this.setState({
+      topic: topic
+    });
+  },
+
+
+  componentDidMount: function() {
+
+    wordcloud.init(this.getDOMNode(), this.clickHandler);
+
+
+  }
+
+});
+
+
+
+
+
+
+var WordMap =React.createClass({
+ render: function(){
+     var frequency_list = [{"text":"study","size":40},{"text":"motion","size":15},{"text":"forces","size":10},{"text":"electricity","size":15},{"text":"movement","size":10},{"text":"relation","size":5},{"text":"things","size":10},{"text":"force","size":5},{"text":"ad","size":5},{"text":"energy","size":85},{"text":"living","size":5},{"text":"nonliving","size":5},{"text":"laws","size":15},{"text":"speed","size":45},{"text":"velocity","size":30},{"text":"define","size":5},{"text":"constraints","size":5},{"text":"universe","size":10},{"text":"physics","size":120},{"text":"describing","size":5},{"text":"matter","size":90},{"text":"physics-the","size":5},{"text":"world","size":10},{"text":"works","size":10},{"text":"science","size":70},{"text":"interactions","size":30},{"text":"studies","size":5},{"text":"properties","size":45},{"text":"nature","size":40},{"text":"branch","size":30},{"text":"concerned","size":25},{"text":"source","size":40},{"text":"google","size":10},{"text":"defintions","size":5},{"text":"two","size":15},{"text":"grouped","size":15},{"text":"traditional","size":15},{"text":"fields","size":15},{"text":"acoustics","size":15},{"text":"optics","size":15},{"text":"mechanics","size":20},{"text":"thermodynamics","size":15},{"text":"electromagnetism","size":15},{"text":"modern","size":15},{"text":"extensions","size":15},{"text":"thefreedictionary","size":15},{"text":"interaction","size":15},{"text":"org","size":25},{"text":"answers","size":5},{"text":"natural","size":15},{"text":"objects","size":5},{"text":"treats","size":10},{"text":"acting","size":5},{"text":"department","size":5},{"text":"gravitation","size":5},{"text":"heat","size":10},{"text":"light","size":10},{"text":"magnetism","size":10},{"text":"modify","size":5},{"text":"general","size":10},{"text":"bodies","size":5},{"text":"philosophy","size":5},{"text":"brainyquote","size":5},{"text":"words","size":5},{"text":"ph","size":5},{"text":"html","size":5},{"text":"lrl","size":5},{"text":"zgzmeylfwuy","size":5},{"text":"subject","size":5},{"text":"distinguished","size":5},{"text":"chemistry","size":5},{"text":"biology","size":5},{"text":"includes","size":5},{"text":"radiation","size":5},{"text":"sound","size":5},{"text":"structure","size":5},{"text":"atoms","size":5},{"text":"including","size":10},{"text":"atomic","size":10},{"text":"nuclear","size":10},{"text":"cryogenics","size":10},{"text":"solid-state","size":10},{"text":"particle","size":10},{"text":"plasma","size":10},{"text":"deals","size":5},{"text":"merriam-webster","size":5},{"text":"dictionary","size":10},{"text":"analysis","size":5},{"text":"conducted","size":5},{"text":"order","size":5},{"text":"understand","size":5},{"text":"behaves","size":5},{"text":"en","size":5},{"text":"wikipedia","size":5},{"text":"wiki","size":5},{"text":"physics-","size":5},{"text":"physical","size":5},{"text":"behaviour","size":5},{"text":"collinsdictionary","size":5},{"text":"english","size":5},{"text":"time","size":35},{"text":"distance","size":35},{"text":"wheels","size":5},{"text":"revelations","size":5},{"text":"minute","size":5},{"text":"acceleration","size":20},{"text":"torque","size":5},{"text":"wheel","size":5},{"text":"rotations","size":5},{"text":"resistance","size":5},{"text":"momentum","size":5},{"text":"measure","size":10},{"text":"direction","size":10},{"text":"car","size":5},{"text":"add","size":5},{"text":"traveled","size":5},{"text":"weight","size":5},{"text":"electrical","size":5},{"text":"power","size":5}];
+      var wordMap = [];  
+      for(var i = 0; i < frequency_list.length; i++){
+        console.log("Adding "+frequency_list[i].size.toString() +" for text "+ frequency_list[i].text);
+        wordMap.push(<g fill="green" fontFamily="sans-serif" fontSize={frequency_list[i].size} >{frequency_list[i].text}</g>); 
+      }
+      return (
+      <div>{wordMap}</div>
+
+      ); 
+    }
+
+});
 
 
 var ResultBar = React.createClass({
@@ -155,9 +236,15 @@ var ResultBar = React.createClass({
   console.log("The words gotten are "+this.props.words)
    var words =this.props.words.toString()
    console.log(words)
-
+   console.log("Most freuqent words are "+this.props.most_frequent[0])
+    var frequent = [];
     // what to return in order to show download window?
    console.log("THe console.log is "+ this.props.json)
+   for(var i =0; i < this.props.most_frequent.length ;i++ ){
+   frequent.push(<li >{this.props.most_frequent[i].toString()}</li>);
+  console.log("Pushing"+ this.props.most_frequent[i].toString());
+}
+   
    return (
     <body>
     
@@ -165,18 +252,24 @@ var ResultBar = React.createClass({
        <p>This is what Buzzfeed thinks of: (Insert word)</p> 
 
        <p> {{this.props.title}}</p>
-      
+       
          <D3Chart width={this.props.width} height={this.props.height}>
               <DataSeries data={this.props.data} colors={this.props.colors} width=
                 {this.props.width} height={this.props.height}/>
         </D3Chart>
-      <p>The most frequent words are: </p>
+
+        <WordCloud/>
+      <p>The key words are : </p>
      <p> {this.props.words}</p>
+     <p> The most frequent words are : </p>
+     <div>{frequent}</div>
+
+
  <a className = "btn" href={this.props.json} download="data.json"> Download Dataset</a>
 
     </div>
   
-    </body>
+    </body>, mountNode
     )
 
 
@@ -194,6 +287,7 @@ var FilterableProductTable = React.createClass({
             filterText: '',
             inStockOnly: false, 
             txt:"Check out the buzzfeed API", 
+          most_frequent_words: most_frequent_words,
          
 data :[
     {name: "Above Average",count: parseFloat(above_average)},
@@ -227,6 +321,7 @@ json: URL.createObjectURL(jsonObj)
     },
 
     render: function() {
+      console.log("Here what is the frequent words?"+ this.state.most_frequent_words); 
         return (
             <div>
                 <ResultBar
@@ -237,6 +332,7 @@ json: URL.createObjectURL(jsonObj)
                     data = {this.state.data}
                     json = {this.state.json}
                     words= {this.state.words}
+                    most_frequent= {this.state.most_frequent_words}
                     title="Yo"
                      txt ={this.state.txt}/>
                     }
@@ -258,7 +354,13 @@ json: URL.createObjectURL(jsonObj)
  average = json.results.average
  keywords = json.keywords 
  most_frequent_words = json.most_frequent_word
- console.log("WOrd is "+most_frequent_words)
+ most_frequent_words = most_frequent_words.split(",")
+
+ console.log(typeof(most_frequent_words))
+ console.log(most_frequent_words)
+
+
+
 
          
 data =[
@@ -277,7 +379,7 @@ var jsonObj = new Blob([jsonStr], {type:"text/json"});
 
   
 
-React.render(<FilterableProductTable text2="H"  data={data} json = {json} words = {words} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
+React.render(<FilterableProductTable text2="H" most_frequent_words ={most_frequent_words} data={data} json = {json} words = {words} filterTextInput="" onUserInput="" txt="Hello, and welcome, to buzzfeedAPI"/>, document.body);
 </script>
   <script type="text/javascript">
     d3.select("body").append("h1").html("Something went wrong, probably with the JSON or the data scraping. ")

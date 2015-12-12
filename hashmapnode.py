@@ -6,6 +6,7 @@ class HashmapNode(object):
 		self.value = value
 
 	def getKey(self):
+		print("Returning "+self.key)
 		return self.key
 
 		

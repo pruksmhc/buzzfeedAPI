@@ -35,47 +35,62 @@ indicoio.config.api_key = "fd1d2b43d2cecbb5bf178f3062cd96f1"
 #	jsonObj = json.loads("[{\"url\": \"http://www.buzzfeed.com/bradesposito/not-today-movie\", \"title\": \" No There Won 't Be A Game Of Thrones Movie Any Time Soon\"}]"
 
 
-def getFrequentWords(json):
+def getFrequentWords(jsonStr):
 	#	print("PRINTING MOST FREQUENT WORD ")
 	
 	try:
 		print("In here")
+		print(type(jsonStr))
 		hash_map = HashMap("hello")
-		for item in json:
-			words = str(item).split(" ")
+
+		for i in jsonStr:
+			for j in i:
+				for item in j:
+					print("The items are "+item)
+					words = str(item).split(" ")
+
 	#		print (words)
-			for word in words:
-				if word != "":
+					for word in words:
+						if word != "":
 			#		print("The word being examined is "+word)
-					if(hash_map.containsKey(word) ==False):
+
+							if(hash_map.containsKey(word) ==False):
 				#		print("Putitng the word in")
-						hash_map.put(word, 1) 
-					else:
+								print("Inserting for first time"+ word)
+
+								hash_map.put(word, 1) 
+							else:
+								print("Inserting and incrementing"+ word)
 				#		print("Incrementing the word")
-						node =hash_map.query(word).setValue(hash_map.get(word)+1)  
+								node =hash_map.query(word).setValue(hash_map.get(word)+1)  
 				#at the end fo the array 
 	#	print (hash_map.find_highest_value().getKey())
-		print("STIL HERE")
+				print("STIL HERE")
 
-		highest_value = hash_map.find_highest_value().getKey()
-		print("HIGHEST RETURNING "+highest_value) 
-		return highest_value
+				highest_value = hash_map.find_highest_value()
+				print(type(highest_value))
+				for word in highest_value:
+					print("HIGHEST "+word)
+				return highest_value
 	except: 
+		print(sys.exc_info()[0])
 		print("Reutrning none")
 		return "None"
 
-def getSentiment(json):
+def getSentiment(jsonInput):
 	jsonStr = ""
 #	print("Getitng the sentiment")
 
 #	print(json[0][0])
+
 	try:
 	#	print("EVALUATED ARRAY")
-		sentiments =  indicoio.sentiment(json[0][0])
+		sentiments =  indicoio.sentiment(jsonInput[0][0])
 	#	print("has gotten the snetimetns, getitng keyw ords")
-		keywords = indicoio.keywords(json[0][0])
+		keywords = indicoio.keywords(jsonInput[0][0])
 	#	print(sentiments)
 	#most frequent words. 
+
 
 		average =0 
 		above_average = 0 
@@ -95,11 +110,17 @@ def getSentiment(json):
 		above_average = float(above_average)/len(sentiments)
 		below_average= float(below_average)/len(sentiments) 
 		print("GETTING REQUENT WORKS")
-		most_frequent_words = getFrequentWords(json) 
-		print("WORD IS "+most_frequent_words)
+	   	most_frequent_words =getFrequentWords(jsonInput) 
 	#	print('Most frequtent word is '+ most_frequent_words)
+	    	words_string=''.join(most_frequent_words)
 
-		jsonStr = "{\"results\":{\"above_average\":\""+str(above_average)+"\", \"below_average\" :\""+str(below_average)+"\",\"average\":"+str(average)+"}, \"keywords\": \""+str(keywords)+"\", \"most_frequent_word\":\""+most_frequent_words+"\"}"
+		jsonStr = "{\"results\":{\"above_average\":\""+str(above_average)+"\", \"below_average\" :\""+str(below_average)+"\",\"average\":"+str(average)+"}, \"keywords\": \""+str(keywords)+"\", \"most_frequent_word\":\""
+		for i in most_frequent_words[1:len(most_frequent_words)]:
+			jsonStr+=i+","
+		jsonStr+= "\"}"
+				
+
+
 	except Exception,e:
 	#	print "Unexpected error:", sys.exc_info()[0]
 	 #  	print str(e)
@@ -227,10 +248,22 @@ def getBuzzfeedPost(input):
 
 	#print("Returning json")
 	#print(jsonStr)
+	try:
+		for i in jsonStr:
+			for j in i:
+
+				for k in j:
+					print("By the time you get the json String, the buzzfeed post should be "+k) 
+					print(type(k))
+
+	except:
+		print(sys.exc_info()[0])
+
 	return jsonStr
 
 def getBuzzfeed(word):
 	#print ("PRINTING BUZZFEE")
+	print(word)
 
 	firstNode = LinkedListNode("")
 	firstNode.setNext(None)
@@ -280,10 +313,10 @@ def getBuzzfeed(word):
 	jsonStr+= " {\"title\": \" "+currentJSON.getTitle()+ "\", \"url\": \""+currentJSON.getURL() +"\" } "
 	jsonStr+= ' ]}'
 #	print (jsonStr)
-	commentsList = getBuzzfeedPost(jsonStr)
 	#print("KIn teh kgetBuzzfeed post")
-	sentiment = getSentiment(commentsList) 
+	sentiment = getSentiment(getBuzzfeedPost(jsonStr)) 
 	#print("returning sentiment")
+	print("Returning for good")
 	return sentiment
 
 	#create a hhahmap with teh most used words. 
