@@ -21,15 +21,10 @@ import urllib
 
 def BuzzfeedSet(request):
 
-	#print(request)
-	#print (request.method)
-#	print(request.POST['word'])
-
 	if(request.method== "POST"):
 	#	print("In buzzfeed set now")
 		json = getBuzzfeed(request.POST['word'])
-	#	print ("WOAH'")
-	#	print (json)
+
 	return HttpResponse(json)
 	#return HttpResponse(json)
 
@@ -38,9 +33,6 @@ def BuzzfeedSet(request):
 def history(request):
     template = loader.get_template('history.html')
     query_results = BuzzfeedSearch.objects.order_by('created')
-   # print(query_results)
-   # print(type(query_results))
-   # print("YO")
     for query in query_results:
     	data = query.json
         jsonList = []

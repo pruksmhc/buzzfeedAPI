@@ -64,8 +64,6 @@ def getFrequentWords(jsonStr):
 				
 				return highest_value
 	except: 
-		#print(sys.exc_info()[0])
-		#print("Reutrning none")
 		return "None"
 
 def getSentiment(jsonInput, word):
