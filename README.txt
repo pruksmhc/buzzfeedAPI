@@ -26,3 +26,6 @@ GET: /<post>/comments
 I used the API to create a website where users can input in a word and that word would be searched in the Buzzfeed API. The comments of each blog post that is extracted using the GET /search would then be parsed through the Indico API to get its sentiment and the words with the highest frequency in the comments of those posts. 
 
 Run the website by cding into the directory and then running "python manage.py runserver", and then go to 127.0.0.1:8000/ to start. Then, you can query a word and see how that word is portrayed in buzzfeed, as well as the key words associated with that query word. 
+
+What to do: 
+-Modularize data scraping. 

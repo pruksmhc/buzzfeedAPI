@@ -194,8 +194,10 @@ def checkH2(item, jsonStr):
 				match = re.sub(r'\W+', ' ', match)
 				match = match.replace("u2019", "'")
 				match = match.replace("h2", "")
+
 				jsonStr.append(match)
 	return jsonStr
+	
 
 def checkP(item, jsonStr):
 	##print("CHECKING ")
