@@ -1,4 +1,4 @@
-This project is for Data Structures (except I decided to take this project to the next level). 
+This project is for Data Structures 
 This project implements the following technologies: 
 Front-end: 
 React
@@ -22,6 +22,12 @@ extract data from various online resources to study political and socioeconomic 
 The unofficial Buzzfeed API has the following endpoints:
 GET: /search
 GET: /<post>/comments
+
+How to run: 
+cd into the repository, then run "python manage.py runserver"
+Go to "http://127.0.0.1" to go to the home page 
+Go to "http://127.0.0.1/history" to go to the history page
+
 
 I used the API to create a website where users can input in a word and that word would be searched in the Buzzfeed API. The comments of each blog post that is extracted using the GET /search would then be parsed through the Indico API to get its sentiment and the words with the highest frequency in the comments of those posts. 
 
