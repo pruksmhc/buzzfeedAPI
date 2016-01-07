@@ -1,4 +1,4 @@
-This project is for Data Structures 
+This project is for Data Structures class 
 This project implements the following technologies: 
 Front-end: 
 React
